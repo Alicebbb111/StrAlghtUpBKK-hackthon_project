@@ -11,6 +11,7 @@ const {
 const { promisify } = require("node:util");
 const { tracks, lessons, questions } = require("./content");
 const { analyzeSkills } = require("../ai/skillAnalysis");
+const { createStudio, publicItem } = require("../ai/studio");
 const hashPassword = promisify(scrypt);
 const publicDir = path.resolve(__dirname, "../frontend/skillbridge-ai");
 const cleanLesson = ({ correct, explanation, ...rest }) => rest;
@@ -37,6 +38,7 @@ function string(value, label, max, min = 1) {
 function createApp({
   dataDir = process.env.DATA_DIR || path.resolve(__dirname, "../data"),
   clock = () => Date.now(),
+  ai = {},
 } = {}) {
   fs.mkdirSync(dataDir, { recursive: true });
   const db = new DatabaseSync(path.join(dataDir, "skillbridge.sqlite"));
@@ -46,6 +48,7 @@ function createApp({
     CREATE TABLE IF NOT EXISTS attempts (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), track TEXT NOT NULL, expires INTEGER NOT NULL, submitted INTEGER DEFAULT 0);
   `);
   const limits = new Map();
+  const studio = createStudio(db, clock, ai);
   function limit(req, category, max) {
     const key = `${req.socket.remoteAddress}:${category}`;
     const now = clock();
@@ -94,7 +97,10 @@ function createApp({
   const publicUser = (user) => ({
     registered: Boolean(user.email),
     email: user.email || null,
-    state: user.state,
+    state: {
+      ...user.state,
+      aiHistory: (user.state.aiHistory || []).map(publicItem),
+    },
   });
   async function body(req) {
     let size = 0;
@@ -118,7 +124,13 @@ function createApp({
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
     });
-    res.end(JSON.stringify(value));
+    res.end(
+      JSON.stringify(value, (key, item) =>
+        key === "aiHistory" && Array.isArray(item)
+          ? item.map(publicItem)
+          : item,
+      ),
+    );
   }
   const server = http.createServer(async (req, res) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
@@ -230,6 +242,10 @@ function createApp({
       }
       const user = getUser(req);
       const state = user.state;
+      if (route.startsWith("/api/ai/")) {
+        limit(req, "ai", 40);
+        return json(res, 200, await studio(route, req.method, inputBody, user));
+      }
       if (route === "/api/me" && req.method === "GET")
         return json(res, 200, publicUser(user));
       if (route === "/api/register" && req.method === "POST") {
@@ -418,7 +434,10 @@ function createApp({
       }
       if (route === "/api/export" && req.method === "GET") {
         if (url.searchParams.get("download") === "1") {
-          res.setHeader("Content-Disposition", `attachment; filename="skillbridge-data-${new Date(clock()).toISOString().slice(0, 10)}.json"`);
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="skillbridge-data-${new Date(clock()).toISOString().slice(0, 10)}.json"`,
+          );
         }
         return json(res, 200, {
           product: "SkillBridge",
