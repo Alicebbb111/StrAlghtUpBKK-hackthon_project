@@ -69,7 +69,7 @@ async function api(path, method = "GET", data) {
       credentials: "same-origin",
       headers: { "Content-Type": "application/json", "X-SkillBridge": "1" },
       ...(data !== undefined ? { body: JSON.stringify(data) } : {}),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(path.startsWith("/ai/") ? 75000 : 15000),
     });
   } catch {
     throw new Error(
@@ -183,7 +183,7 @@ function dashboard() {
   <div class="stat-row" aria-label="ความก้าวหน้าของคุณ">${[
     [
       "Learning streak",
-      `${w.streak} <small>${w.streak === 1 ? 'day' : 'days'}</small>`,
+      `${w.streak} <small>${w.streak === 1 ? "day" : "days"}</small>`,
       w.streak ? "ทำต่ออีกนิด ให้เป็นนิสัย" : "เริ่มวันแรกของคุณวันนี้",
       "leaf",
     ],
@@ -339,7 +339,7 @@ function auth(mode) {
   return `<a class="back-link" href="#/dashboard">${icon("back")}Back to workspace</a><section class="auth-wrap"><div class="panel"><div class="eyebrow">${register ? "MAKE YOURSELF AT HOME" : "WELCOME BACK"}</div><h1>${register ? "Keep your next chapter." : "Good to see you again."}</h1><p>${register ? "สร้างบัญชีเพื่อเก็บสิ่งที่ได้เรียนรู้ ความก้าวหน้าจาก Guest workspace นี้จะอยู่ต่อในบัญชีของคุณ" : "เข้าสู่ระบบเพื่อกลับมาที่บทเรียนและโน้ตของคุณ"}</p><form id="auth-form" data-mode="${mode}">${register ? `<div class="field"><label class="form-label" for="auth-name">ชื่อของคุณ</label><input id="auth-name" name="name" value="${esc(state().name)}" maxlength="60" required autocomplete="name"></div>` : ""}<div class="field"><label class="form-label" for="auth-email">Email address</label><input id="auth-email" type="email" name="email" maxlength="254" required autocomplete="email"></div><div class="field"><label class="form-label" for="auth-password">Password</label><input id="auth-password" type="password" name="password" minlength="${register ? 8 : 1}" maxlength="128" required autocomplete="${register ? "new-password" : "current-password"}"><p class="form-hint">${register ? "อย่างน้อย 8 ตัวอักษร · โปรดใช้รหัสผ่านเฉพาะสำหรับโปรเจกต์นี้" : "ยังไม่มีระบบรีเซ็ตรหัสผ่านผ่านอีเมล"}</p></div>${register ? '<p class="form-hint">ระบบเก็บอีเมล ชื่อ และความก้าวหน้าบนเซิร์ฟเวอร์ของโปรเจกต์ <a href="#/about">อ่านรายละเอียดข้อมูลส่วนตัว</a></p>' : '<p class="form-hint">การเข้าสู่ระบบจะเปิดข้อมูลของบัญชีนั้น ข้อมูล Guest จะไม่ถูกรวมเข้าบัญชีเดิมโดยอัตโนมัติ</p>'}<div id="form-error" class="error" role="alert"></div><button class="btn" type="submit">${register ? "Create my account" : "Sign in"} ${icon("arrow")}</button></form><div class="auth-switch">${register ? 'มีบัญชีแล้ว? <a href="#/login">Sign in</a>' : 'ครั้งแรกที่นี่? <a href="#/register">Create an account</a>'}</div></div></section>`;
 }
 function about() {
-  return `${heading("Learning, with a little direction.", "SkillBridge · พื้นที่เริ่มต้นสำหรับคนที่กำลังหาเส้นทางของตัวเอง")}<div class="about-copy"><section class="panel"><h2>Small steps. Real possibilities.</h2><p>SkillBridge ต่อยอดจากโปรเจกต์ strAIght Up BKK เพื่อช่วยให้ผู้เรียนลองสำรวจพื้นฐาน เลือกทักษะที่สนใจ และเก็บความก้าวหน้าจากการลงมือทำ</p><p>เวอร์ชันนี้มี 3 เส้นทาง 12 บทเรียน พร้อมแบบประเมินและโจทย์ท้ายบท ไม่ต้องสมัครบัญชีเพื่อเริ่มเรียน และไม่ต้องใช้บริการ AI ภายนอก</p></section><section class="panel"><h2>How recommendations work</h2><p>แบบประเมินมี 12 ข้อต่อเส้นทาง หรือ 3 ข้อต่อทักษะ ระบบตรวจคำตอบด้วยเกณฑ์ที่กำหนด แล้วเรียงบทเรียนที่ได้คะแนนน้อยไว้ก่อน ผลนี้ไม่ใช่การทำนายอาชีพ ความเหมาะสมกับงาน หรือใบรับรองที่นายจ้างรับรอง</p><p>การเรียนจบหมายถึงตอบโจทย์ท้ายบทได้ถูกต้อง ส่วน mini project และโน้ตเป็นงานฝึกด้วยตนเอง ระบบยังไม่ได้ประเมินคุณภาพของชิ้นงานเหล่านั้น เวลาเรียนที่แสดงเป็นเวลาแนะนำของบท ไม่ใช่เวลาที่จับจากหน้าจอ</p></section><section class="panel"><h2>Your privacy</h2><p>ข้อมูลถูกเก็บในฐานข้อมูล SQLite บนเซิร์ฟเวอร์ที่รันโปรเจกต์นี้ ได้แก่ ชื่อ อีเมล (เมื่อสมัคร) รหัสผ่านที่ผ่าน scrypt ผลประเมิน ประวัติเรียน และโน้ต ผู้ดูแลเซิร์ฟเวอร์เข้าถึงข้อมูลที่จัดเก็บได้</p><p>คุกกี้ HttpOnly ใช้ระบุ workspace และมีอายุ 30 วัน Guest ที่ล้างคุกกี้หรือเปลี่ยนเบราว์เซอร์จะเข้าข้อมูลเดิมไม่ได้ แบบประเมินระหว่างทำเก็บชั่วคราวใน sessionStorage ของแท็บและมีอายุ 2 ชั่วโมง</p><p>ไม่มี analytics และไม่มีการส่งข้อมูลไปยัง AI provider ฟอนต์โหลดจากไฟล์ในโปรเจกต์ ลิงก์อ่านเพิ่มเติมจะเปิดเว็บไซต์ภายนอกซึ่งมีนโยบายของตัวเอง</p><p>ส่งออกข้อมูลหรือลบ workspace ได้ที่ <a class="text-link" href="#/settings">Settings →</a> การลบจะนำข้อมูลออกจากฐานข้อมูลที่กำลังใช้งาน ผู้ดูแลต้องจัดการสำเนาสำรองแยกต่างหาก</p></section><section class="panel"><h2>Before using it with real learners</h2><p>นี่คือเวอร์ชันส่งงานและเดโมที่รันได้ครบวงจร สำหรับเปิดบริการสาธารณะ ผู้ดูแลต้องตั้งค่า HTTPS และ Secure cookie วางแผนสำรองและลบข้อมูล เพิ่มการยืนยันอีเมล การกู้บัญชี และทบทวนเนื้อหากับผู้สอนก่อนใช้งานในวงกว้าง</p></section></div>`;
+  return `${heading("Learning, with a little direction.", "SkillBridge · พื้นที่เริ่มต้นสำหรับคนที่กำลังหาเส้นทางของตัวเอง")}<div class="about-copy"><section class="panel"><h2>Small steps. Real possibilities.</h2><p>SkillBridge ต่อยอดจากโปรเจกต์ strAIght Up BKK เพื่อช่วยให้ผู้เรียนลองสำรวจพื้นฐาน เลือกทักษะที่สนใจ และเก็บความก้าวหน้าจากการลงมือทำ</p><p>เวอร์ชันนี้มี 3 เส้นทาง 12 บทเรียน พร้อมแบบประเมินและโจทย์ท้ายบท ไม่ต้องสมัครบัญชีเพื่อเริ่มเรียน พร้อม AI Studio สำหรับสร้างแบบฝึกหัดและสรุปโน้ตเมื่อผู้ดูแลตั้งค่า API key</p></section><section class="panel"><h2>How recommendations work</h2><p>แบบประเมินมี 12 ข้อต่อเส้นทาง หรือ 3 ข้อต่อทักษะ ระบบตรวจคำตอบด้วยเกณฑ์ที่กำหนด แล้วเรียงบทเรียนที่ได้คะแนนน้อยไว้ก่อน ผลนี้ไม่ใช่การทำนายอาชีพ ความเหมาะสมกับงาน หรือใบรับรองที่นายจ้างรับรอง</p><p>การเรียนจบหมายถึงตอบโจทย์ท้ายบทได้ถูกต้อง ส่วน mini project และโน้ตเป็นงานฝึกด้วยตนเอง ระบบยังไม่ได้ประเมินคุณภาพของชิ้นงานเหล่านั้น เวลาเรียนที่แสดงเป็นเวลาแนะนำของบท ไม่ใช่เวลาที่จับจากหน้าจอ</p></section><section class="panel"><h2>Your privacy</h2><p>ข้อมูลถูกเก็บในฐานข้อมูล SQLite บนเซิร์ฟเวอร์ที่รันโปรเจกต์นี้ ได้แก่ ชื่อ อีเมล (เมื่อสมัคร) รหัสผ่านที่ผ่าน scrypt ผลประเมิน ประวัติเรียน และโน้ต ผู้ดูแลเซิร์ฟเวอร์เข้าถึงข้อมูลที่จัดเก็บได้</p><p>คุกกี้ HttpOnly ใช้ระบุ workspace และมีอายุ 30 วัน Guest ที่ล้างคุกกี้หรือเปลี่ยนเบราว์เซอร์จะเข้าข้อมูลเดิมไม่ได้ แบบประเมินระหว่างทำเก็บชั่วคราวใน sessionStorage ของแท็บและมีอายุ 2 ชั่วโมง</p><p>ไม่มี analytics เมื่อใช้ AI Studio ข้อความที่กรอกและคะแนนที่เลือกแนบจะส่งไปยัง OpenAI โดยเรียกผ่านเซิร์ฟเวอร์ ผลงาน AI เก็บใน workspace 10 รายการล่าสุด แบบประเมินมาตรฐานและบทเรียนไม่ส่งข้อมูลไปยัง AI ฟอนต์โหลดจากไฟล์ในโปรเจกต์ ลิงก์อ่านเพิ่มเติมจะเปิดเว็บไซต์ภายนอกซึ่งมีนโยบายของตัวเอง</p><p>ส่งออกข้อมูลหรือลบ workspace ได้ที่ <a class="text-link" href="#/settings">Settings →</a> การลบจะนำข้อมูลออกจากฐานข้อมูลที่กำลังใช้งาน ผู้ดูแลต้องจัดการสำเนาสำรองแยกต่างหาก</p></section><section class="panel"><h2>Before using it with real learners</h2><p>นี่คือเวอร์ชันส่งงานและเดโมที่รันได้ครบวงจร สำหรับเปิดบริการสาธารณะ ผู้ดูแลต้องตั้งค่า HTTPS และ Secure cookie วางแผนสำรองและลบข้อมูล เพิ่มการยืนยันอีเมล การกู้บัญชี และทบทวนเนื้อหากับผู้สอนก่อนใช้งานในวงกว้าง</p></section></div>`;
 }
 function updateAccount() {
   if (!app.user) return;
@@ -358,12 +358,27 @@ function routeInfo() {
     .split("/");
   return { page: page || "dashboard", id };
 }
+function studioPage() {
+  const history = [...(state().aiHistory || [])].reverse();
+  return `${heading("A little help, when you need it.", "AI Studio · เปลี่ยนหัวข้อที่สนใจให้เป็นแบบฝึกหัด หรือสรุปสิ่งที่กำลังเรียน")}
+  <div class="two-column"><section class="panel"><span class="badge">${app.aiConfigured ? "KEY CONFIGURED · ตั้งค่าคีย์แล้ว" : "SETUP NEEDED · ยังไม่ได้ใส่คีย์"}</span>
+  <h2 class="small-spaced">วันนี้อยากให้ช่วยอะไร?</h2><form id="ai-create">
+  <div class="field"><label class="form-label" for="ai-kind">Choose a task</label><select id="ai-kind" name="kind"><option value="form">สร้างแบบฝึกหัด · 5 questions</option><option value="summary">สรุปโน้ต & แนะนำแผนเรียน</option></select></div>
+  <div class="field"><label class="form-label" for="ai-topic">หัวข้อ เป้าหมาย หรือโน้ตที่ต้องการสรุป</label><textarea id="ai-topic" name="topic" rows="7" minlength="3" maxlength="8000" required placeholder="เช่น ฝึก SQL JOIN สำหรับมือใหม่ หรือวางโน้ตจากบทเรียนที่นี่"></textarea></div>
+  <label class="form-hint"><input type="checkbox" name="includeProgress"> แนบคะแนนล่าสุดในเส้นทางปัจจุบันและจำนวนบทเรียนที่เรียนจบ</label>
+  <p><label class="form-hint"><input type="checkbox" name="consent" required> ส่งข้อความนี้และข้อมูลที่เลือกแนบไปยัง OpenAI เพื่อสร้างคำตอบ</label></p>
+  <div id="form-error" class="error" role="alert"></div><button class="btn" type="submit" ${app.aiConfigured ? "" : "disabled"}>Create with AI ${icon("spark")}</button>
+  <p class="form-hint small-spaced">อาจใช้เวลาประมาณหนึ่งนาที ผลงานเก็บใน workspace นี้ 10 รายการล่าสุด</p></form></section>
+  <aside class="stack"><section class="panel"><h3>${app.aiConfigured ? "Your learning companion" : "พร้อมเปิดใช้เมื่อคุณพร้อม"}</h3><p class="small-spaced">${app.aiConfigured ? "คีย์ถูกตั้งค่าในเซิร์ฟเวอร์แล้ว สถานะนี้ยังไม่ยืนยันเครดิตหรือการเชื่อมต่อกับผู้ให้บริการ" : "คัดลอก .env.example เป็น .env ใส่ OPENAI_API_KEY แล้วเริ่มเซิร์ฟเวอร์ใหม่และรีเฟรชหน้านี้"}</p><p class="small-spaced">คำตอบสร้างโดย AI อาจคลาดเคลื่อนได้ ใช้เป็นแบบฝึกหัดเสริมและตรวจทานกับบทเรียน คะแนนส่วนนี้ไม่รวมใน Skill passport</p><p class="form-hint small-spaced">การเรียก API มีค่าใช้จ่ายตามบัญชีของผู้ดูแล ค่าเริ่มต้นจำกัด 20 ครั้งต่อวันต่อเซิร์ฟเวอร์ ไม่ส่งชื่อ อีเมล หรือโน้ตอื่นโดยอัตโนมัติ</p></section></aside></div>
+  <section class="small-spaced"><div class="section-title"><h2>Your studio notebook</h2><span>${history.length} / 10 saved</span></div>${history.length ? history.map((item) => `<article class="panel small-spaced"><span class="eyebrow">${item.kind === "form" ? "AI PRACTICE" : "AI SUMMARY"} · ${formatDate(item.at)}</span><h2>${esc(item.title)}</h2>${item.kind === "summary" ? `<p class="small-spaced">${esc(item.summary)}</p><h3 class="small-spaced">Key takeaways</h3><ul>${item.takeaways.map((v) => `<li>${esc(v)}</li>`).join("")}</ul><h3>Next steps · ลองทำต่อ</h3><ol>${item.nextSteps.map((v) => `<li>${esc(v)}</li>`).join("")}</ol>` : item.result ? `<p>ตอบถูก ${item.result.correct} / 5 ข้อ</p><details><summary>Review answers · ดูเฉลยและเหตุผล</summary>${item.result.review.map((q, i) => `<div class="result-review"><h3>${i + 1}. ${esc(q.text)}</h3><p>คุณตอบ: ${esc(q.choices[q.selected])}</p><p>เฉลย: ${esc(q.choices[q.correct])}</p><p>${esc(q.explanation)}</p></div>`).join("")}</details>` : `<form data-ai-form="${esc(item.id)}">${item.questions.map((q, i) => `<fieldset class="small-spaced"><legend>${i + 1}. ${esc(q.text)}</legend><div class="answers">${q.choices.map((choice, j) => `<label class="answer"><input required type="radio" name="q${i}" value="${j}"><span>${esc(choice)}</span></label>`).join("")}</div></fieldset>`).join("")}<div class="error" role="alert"></div><button type="submit" class="btn small-spaced">Check answers</button></form>`}</article>`).join("") : '<div class="panel"><h3>Make something worth keeping.</h3><p>แบบฝึกหัดและสรุปที่คุณสร้างจะอยู่ตรงนี้ กลับมาทบทวนได้ทุกเมื่อ</p></div>'}</section>`;
+}
 function render({ focus = false } = {}) {
   if (!app.user || !app.catalog) return;
   const { page, id } = routeInfo();
   const nav = [
     ["dashboard", "home", "Overview"],
     ["assessment", "compass", "Discover my skills"],
+    ["studio", "spark", "AI Studio"],
     ["path", "path", "My learning path"],
     ["resources", "book", "Learning library"],
     ["passport", "passport", "Skill passport"],
@@ -377,6 +392,7 @@ function render({ focus = false } = {}) {
       .join("") +
     `<div class="nav-divider"></div><a class="nav-item ${page === "settings" ? "active" : ""}" href="#/settings">${icon("settings")}Settings</a>`;
   const labels = {
+    studio: "AI Studio",
     dashboard: "Overview",
     assessment: "Discover my skills",
     results: "Your results",
@@ -392,6 +408,7 @@ function render({ focus = false } = {}) {
   $("#page-label").textContent = labels[page] || "Page not found";
   document.title = `${labels[page] || "Page not found"} · SkillBridge`;
   const pages = {
+    studio: studioPage,
     dashboard,
     assessment: () => assessment(id),
     results,
@@ -429,7 +446,9 @@ async function busy(button, action, errorSelector) {
   try {
     await action();
   } catch (error) {
-    showError(error, errorSelector);
+    const localError = button?.closest("form")?.querySelector(".error");
+    if (localError) localError.textContent = error.message;
+    else showError(error, errorSelector);
   } finally {
     if (button?.isConnected) button.disabled = false;
   }
@@ -474,6 +493,27 @@ document.addEventListener("submit", async (event) => {
   event.preventDefault();
   const button = $("button[type=submit]", form);
   const data = Object.fromEntries(new FormData(form));
+  if (form.id === "ai-create")
+    return busy(button, async () => {
+      await api("/ai/" + data.kind, "POST", {
+        topic: data.topic,
+        consent: data.consent === "on",
+        includeProgress: data.includeProgress === "on",
+      });
+      app.user = await api("/me");
+      render();
+      toast("บันทึกผลงาน AI แล้ว");
+    });
+  if (form.dataset.aiForm)
+    return busy(button, async () => {
+      await api("/ai/submit", "POST", {
+        id: form.dataset.aiForm,
+        answers: Array.from({ length: 5 }, (_, i) => Number(data["q" + i])),
+      });
+      app.user = await api("/me");
+      render();
+      toast("ตรวจคำตอบแล้ว เปิดดูเฉลยได้เลย");
+    });
   if (form.id === "assessment-start")
     return busy(button, async () => {
       const result = await api("/assessment", "POST", { track: data.track });
@@ -723,6 +763,7 @@ async function initialize() {
     ]);
     app.catalog = catalog;
     app.user = user;
+    app.aiConfigured = (await api("/ai/status")).configured;
     try {
       const d = JSON.parse(sessionStorage.getItem("sb-assessment"));
       if (
