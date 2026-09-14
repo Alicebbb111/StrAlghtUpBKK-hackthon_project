@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#183e34" />
+    <meta
+      name="description"
+      content="SkillBridge — ค้นหาทักษะ เรียนรู้ทีละก้าว และรวบรวมความก้าวหน้าไว้ใน Skill Passport ของคุณ"
+    />
+    <title>SkillBridge · Your next chapter</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">ข้ามไปเนื้อหาหลัก</a>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#/dashboard"
+        ><img
+          src="assets/mark.svg"
+          alt=""
+          width="34"
+          height="34"
+        />SkillBridge<span class="brand-dot">®</span></a
+      >
+      <span class="workspace-label">YOUR LEARNING SPACE</span>
+      <nav aria-label="เมนูหลัก" id="navigation"></nav>
+      <div class="sidebar-bottom">
+        <div class="small-note">
+          <span class="tiny-orbit">↗</span
+          ><strong>A little progress,<br />every day.</strong>
+          <p>ไม่ต้องเก่งตั้งแต่เริ่ม<br />แค่เริ่มจากสิ่งเล็ก ๆ วันนี้</p>
+          <a href="#/path">Find your next step <span>→</span></a>
+        </div>
+        <a class="account-link" href="#/settings"
+          ><span class="avatar" id="avatar">Y</span
+          ><span
+            ><strong id="account-name">Your workspace</strong
+            ><small id="account-type">Guest · บันทึกบนอุปกรณ์นี้</small></span
+          ><span>⌁</span></a
+        >
+      </div>
+    </aside>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <button
+            class="icon-button menu-button"
+            id="menu-toggle"
+            aria-label="เปิดหรือปิดเมนู"
+            aria-expanded="false"
+          >
+            ☰</button
+          ><span>My workspace</span><span class="crumb-slash">/</span
+          ><strong id="page-label">Overview</strong>
+        </div>
+        <div class="top-actions">
+          <button
+            class="search-trigger"
+            id="search-open"
+            aria-label="ค้นหาบทเรียน"
+          >
+            <span id="search-icon"></span><span>ค้นหาบทเรียน</span
+            ><kbd>/</kbd></button
+          ><a class="top-account" href="#/settings" aria-label="ตั้งค่าบัญชี"
+            ><span class="avatar small" id="top-avatar">Y</span></a
+          >
+        </div>
+      </header>
+      <main id="main" tabindex="-1">
+        <div class="loading-state">
+          <span class="loader"></span>
+          <p>กำลังเปิดพื้นที่การเรียนรู้ของคุณ…</p>
+        </div>
+      </main>
+      <footer class="footer">
+        <span
+          >SkillBridge <span class="footer-separator">/</span> Small steps. Real
+          possibilities.</span
+        ><a href="#/about">เกี่ยวกับโปรเจกต์ & ข้อมูลส่วนตัว ↗</a>
+      </footer>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <dialog id="search-dialog" aria-labelledby="search-title">
+      <div class="dialog-top">
+        <h2 id="search-title">Find your next lesson</h2>
+        <button class="icon-button" data-close-dialog aria-label="ปิดการค้นหา">
+          ✕
+        </button>
+      </div>
+      <label class="sr-only" for="global-search">ค้นหาบทเรียนหรือทักษะ</label
+      ><input
+        id="global-search"
+        type="search"
+        placeholder="ลองค้นหา SQL, CSS หรือคอนเทนต์…"
+      />
+      <div id="global-results"></div>
+      <p class="dialog-hint">ค้นหาจากบทเรียนทั้ง 12 บท · กด Esc เพื่อปิด</p>
+    </dialog>
+    <noscript
+      ><p>
+        SkillBridge ต้องใช้ JavaScript กรุณาเปิดใช้งานในเบราว์เซอร์
+      </p></noscript
+    >
+  </body>
+</html>
