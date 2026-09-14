@@ -1,6 +1,6 @@
 {
   "name": "skillbridge",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "A practical learning companion: discover, learn, and build your skill passport.",
   "type": "commonjs",
@@ -14,6 +14,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Alicebbb111/codexhackthon_project-final.git"
+    "url": "https://github.com/Alicebbb111/StrAlghtUpBKK-hackthon_project.git"
   }
 }

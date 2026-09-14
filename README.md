@@ -2,7 +2,7 @@
 
 **Small steps. Real possibilities.**
 
-เว็บสำหรับสำรวจทักษะ เริ่มเรียน และเก็บความก้าวหน้าไว้ใน Skill Passport ต่อยอดจาก `Alicebbb111/codexhackthon_project` สาขา `develop` เป็นเวอร์ชัน 2.0 สำหรับส่งงานและเดโม
+เว็บสำหรับสำรวจทักษะ เริ่มเรียน และเก็บความก้าวหน้าไว้ใน Skill Passport ต่อยอดจาก `Alicebbb111/codexhackthon_project` สาขา `develop` เป็นเวอร์ชัน 2.1 สำหรับส่งงานและเดโม
 
 ## เปิดใช้งาน
 
@@ -12,7 +12,7 @@
 npm start
 ```
 
-เปิด **http://localhost:3000** ไม่ต้องรัน `npm install`, ไม่ต้องตั้ง MySQL และไม่ต้องใช้ API key
+เปิด **http://localhost:3000** ไม่ต้องรัน `npm install`, ไม่ต้องตั้ง MySQL และฟีเจอร์หลักไม่ต้องใช้ API key (AI Studio ต้องตั้งคีย์แยก)
 
 บน Windows ดับเบิลคลิก `START-WINDOWS.cmd` ได้เช่นกัน จากนั้นเปิด URL ที่แสดงในหน้าต่าง เมื่อใช้งานเสร็จ กด Ctrl+C ในหน้าต่างนั้นเพื่อหยุดเซิร์ฟเวอร์
 
@@ -93,8 +93,8 @@ node --env-file=.env backend/server.js
 - URL เก่า เช่น `/assessment.html` และ `/passport.html` ยังเข้าแอปหน้าเดิมได้
 - เปลี่ยนชั้นข้อมูลจาก MySQL ที่ต้องตั้งค่าแยก มาเป็น SQLite เพื่อให้ผู้ตรวจรันได้ทันที โค้ดเวอร์ชันนี้ **ไม่ได้ย้ายข้อมูลจาก MySQL เดิมอัตโนมัติ** และไม่คง compatibility ของ API เก่าทุก endpoint
 - แทนที่ข้อมูล mock และแชทที่ยังไม่เชื่อม ด้วยบทเรียน ผลประเมิน และข้อมูลจากการใช้งานจริง
-- การแนะนำใช้คะแนนและเกณฑ์ที่ตรวจสอบได้ ไม่มี LLM call จึงไม่มีค่าใช้จ่าย API และไม่มีการส่งข้อมูลการเรียนไปยัง AI provider
-- เวอร์ชัน Final แยกไว้ที่ `Alicebbb111/codexhackthon_project-final` โดยคงโค้ดและประวัติใน repository ต้นฉบับไว้ รายละเอียด baseline อยู่ใน `SOURCE.json`
+- แบบประเมินมาตรฐานใช้เกณฑ์ที่ตรวจสอบได้ ส่วน AI Studio เรียก OpenAI จริงเมื่อใส่คีย์และผู้เรียนกดสร้าง มีค่าใช้จ่าย API ตามบัญชีผู้ดูแล
+- เวอร์ชัน Final แยกไว้ที่ `Alicebbb111/StrAlghtUpBKK-hackthon_project` โดยคงโค้ดและประวัติใน repository ต้นฉบับไว้ รายละเอียด baseline อยู่ใน `SOURCE.json`
 
 ## ขอบเขตของเวอร์ชันนี้
 
@@ -103,3 +103,22 @@ node --env-file=.env backend/server.js
 คะแนน 3 ข้อต่อทักษะเป็นเพียงการสำรวจพื้นฐาน ค่าเกณฑ์ใน `careerSkills.js` เป็นเกณฑ์ของโปรเจกต์ ไม่ใช่มาตรฐานอุตสาหกรรม ความสำเร็จของบทเรียนมาจากการตอบโจทย์ท้ายบท ไม่ใช่หลักฐานความชำนาญแบบมีผู้คุมสอบ
 
 Font licenses: `assets/DM-Sans-OFL.txt` และ `assets/Noto-Sans-Thai-OFL.txt` มาสคอตเดิมเก็บไว้เป็น asset ของโปรเจกต์ แต่หน้า UI ใหม่นี้ใช้โลโก้และภาพประกอบ SVG
+
+## AI Studio (v2.1)
+
+- Generate a five-question practice form from a topic, answer it and review explanations. AI practice scores remain separate from the standard Skill Passport assessment.
+- Summarize pasted notes and receive suggested study steps. Optionally include the latest scores for the current track and completed lesson count.
+- Keep the latest 10 outputs per workspace. AI does not run automatically.
+
+### Enable later
+
+1. Copy .env.example to .env in the project root.
+2. Set OPENAI_API_KEY to your own key. Never commit .env or paste the key into frontend code.
+3. Run npm start (or START-WINDOWS.cmd). The server automatically loads .env. Restart and refresh the browser after changing it.
+4. Open AI Studio. A configured key does not guarantee valid credentials, credit or provider availability.
+
+OPENAI_MODEL defaults to gpt-4.1-mini. AI_DAILY_LIMIT defaults to 20 attempted calls per server per UTC day, persisted in SQLite; failed calls also consume this application quota. This is a request limit, not a monetary cap. Set account spending controls separately. The server does not automatically retry charged requests.
+
+Requests use the [OpenAI Responses API with Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), store:false, a 60-second provider timeout, and server-side output validation. Only the entered text and explicitly selected progress are sent; names, emails and unrelated notes are excluded. Review generated content for accuracy. Keeping store:false does not replace the provider's data policies.
+
+No real key or paid request was used in verification. Automated AI tests use a mocked provider transport. Live response quality, account access and billing must be checked after the owner supplies a key. Without a key the page explains setup and disables generation; the original lessons and assessments continue to work.

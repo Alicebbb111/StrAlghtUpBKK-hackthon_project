@@ -1,23 +1,23 @@
-# Verification report · SkillBridge 2.0
+# Verification report · SkillBridge 2.1
 
 ตรวจเมื่อ 14 กันยายน 2026 บน Windows และ Node.js v24.19.0
 
 ## Automated tests
 
-คำสั่ง `npm test` — **10 tests passed, 0 failed**
+คำสั่ง `npm test` — **13 tests passed, 0 failed**
 
-| ตรวจอะไร | ผล |
-|---|---|
+| ตรวจอะไร                                                              | ผล   |
+| --------------------------------------------------------------------- | ---- |
 | 3 tracks, 12 lessons, 36 assessment questions และไม่ส่งเฉลยใน catalog | ผ่าน |
-| Guest → registration → login พร้อมความก้าวหน้าเดิม | ผ่าน |
-| ตรวจคะแนนบน server ปฏิเสธคำตอบไม่ครบและการส่งซ้ำ | ผ่าน |
-| โจทย์ครบทั้ง 12 บท และ completion ไม่เพิ่มซ้ำ | ผ่าน |
-| แยกข้อมูลผู้ใช้ ป้องกันใช้ assessment ของผู้อื่น | ผ่าน |
-| Validation, same-origin headers, email/password constraints | ผ่าน |
+| Guest → registration → login พร้อมความก้าวหน้าเดิม                    | ผ่าน |
+| ตรวจคะแนนบน server ปฏิเสธคำตอบไม่ครบและการส่งซ้ำ                      | ผ่าน |
+| โจทย์ครบทั้ง 12 บท และ completion ไม่เพิ่มซ้ำ                         | ผ่าน |
+| แยกข้อมูลผู้ใช้ ป้องกันใช้ assessment ของผู้อื่น                      | ผ่าน |
+| Validation, same-origin headers, email/password constraints           | ผ่าน |
 | URL หน้าเดิม, security headers และไม่เปิดเผยไฟล์ฐานข้อมูล/เซิร์ฟเวอร์ | ผ่าน |
-| Skill analysis รองรับ 3 เส้นทางและตรวจขอบเขตคะแนน | ผ่าน |
-| คำขอที่ส่งข้อมูลช้าพร้อมกันไม่เขียนทับความก้าวหน้า | ผ่าน |
-| ปิดแล้วเปิดเซิร์ฟเวอร์ใหม่ ข้อมูลและ session ยังอยู่ | ผ่าน |
+| Skill analysis รองรับ 3 เส้นทางและตรวจขอบเขตคะแนน                     | ผ่าน |
+| คำขอที่ส่งข้อมูลช้าพร้อมกันไม่เขียนทับความก้าวหน้า                    | ผ่าน |
+| ปิดแล้วเปิดเซิร์ฟเวอร์ใหม่ ข้อมูลและ session ยังอยู่                  | ผ่าน |
 
 ชุดทดสอบใช้ฐานข้อมูลชั่วคราว ไม่แก้ฐานข้อมูลที่ใช้เปิดหน้า preview
 
@@ -51,3 +51,9 @@
 ## Shipping
 
 ไฟล์ส่งงานไม่รวม `data/`, `node_modules/`, `.env` หรือข้อมูลบัญชีที่ใช้ตรวจ หน้า preview ที่เปิดอยู่ใช้ data directory แยกไว้ต่างหาก โค้ดจะสร้างฐานข้อมูลว่างอัตโนมัติเมื่อผู้รับรันครั้งแรก
+
+## AI extension verification
+
+13 automated tests passed, including mocked Responses API payload/schema, upstream errors/refusal, hidden answer keys, server grading, ownership, persisted history and global daily quota. No paid API request was made. Provider account access and real generated-content quality remain unverified until the owner supplies a key.
+
+Browser AI checks: an isolated local mocked-provider server generated a five-question form, accepted five answers, displayed a 5/5 score, and generated a summary with takeaways and next steps. The normal application was checked without a key and disabled generation with setup instructions. Test fixtures are excluded from the deliverable.
