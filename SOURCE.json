@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/Alicebbb111/codexhackthon_project",
+  "branch": "develop",
+  "commit": "3d26d0733bbc968ca31c58a4cde3604f3376106f",
+  "retrieved": "2026-09-14",
+  "method": "GitHub codeload ZIP archive",
+  "version": "2.0.0",
+  "upstreamModified": false,
+  "retained": [
+    "Core product concept",
+    "ai/skillAnalysis.js",
+    "frontend/skillbridge-ai path",
+    "Original mascot asset",
+    "Compatibility for original HTML page URLs"
+  ]
+}

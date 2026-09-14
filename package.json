@@ -1,0 +1,19 @@
+{
+  "name": "skillbridge",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A practical learning companion: discover, learn, and build your skill passport.",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alicebbb111/codexhackthon_project-final.git"
+  }
+}
